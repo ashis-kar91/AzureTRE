@@ -88,27 +88,33 @@ if ! terraform state show azurerm_storage_account.state_storage > /dev/null; the
   terraform import azurerm_storage_account.state_storage "/subscriptions/$ARM_SUBSCRIPTION_ID/resourceGroups/$TF_VAR_mgmt_resource_group_name/providers/Microsoft.Storage/storageAccounts/$TF_VAR_mgmt_storage_account_name"
 fi
 
-# Import the Key Vault and the CMK into the state
-if ! terraform state show 'azurerm_key_vault.encryption_kv[0]' > /dev/null; then
-  terraform import 'azurerm_key_vault.encryption_kv[0]' "/subscriptions/$ARM_SUBSCRIPTION_ID/resourceGroups/$TF_VAR_mgmt_resource_group_name/providers/Microsoft.KeyVault/vaults/$TF_VAR_encryption_kv_name"
-fi
+if [ "${SKIP_IMPORTS_IN_BOOTSTRAP:-false}" = true ]; then
+  echo -e "\n\e[33m Skipping Terraform imports as SKIP_IMPORTS_IN_BOOTSTRAP=true\e[0m"
+else
+  echo -e "\n\e[33m WARNING: SKIP_IMPORTS_IN_BOOTSTRAP=false. if you encounter 'Error: Cannot import non-existent remote object', note that some environments (e.g., production) have policies that require manual creation of resources, which then has to be imported into Terraform. If this is not required for this deployment, set skip_imports_in_bootstrap:true in the config.yaml to skip these imports.\e[0m"
 
-if ! terraform state show 'azurerm_key_vault_key.tre_mgmt_encryption[0]' > /dev/null; then
-  terraform import 'azurerm_key_vault_key.tre_mgmt_encryption[0]' "$MGMT_ENCYRPTION_KEY_IDENTIFIER_URL"
-fi
+  # Import the Key Vault and the CMK into the state
+  if ! terraform state show 'azurerm_key_vault.encryption_kv[0]' > /dev/null; then
+    terraform import 'azurerm_key_vault.encryption_kv[0]' "/subscriptions/$ARM_SUBSCRIPTION_ID/resourceGroups/$TF_VAR_mgmt_resource_group_name/providers/Microsoft.KeyVault/vaults/$TF_VAR_encryption_kv_name"
+  fi
 
-# Import the encryption identity and its role assignment into the state
-if ! terraform state show 'azurerm_user_assigned_identity.tre_mgmt_encryption[0]' > /dev/null; then
-  terraform import 'azurerm_user_assigned_identity.tre_mgmt_encryption[0]' "/subscriptions/$ARM_SUBSCRIPTION_ID/resourceGroups/$TF_VAR_mgmt_resource_group_name/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-tre-mgmt-encryption"
-fi
+  if ! terraform state show 'azurerm_key_vault_key.tre_mgmt_encryption[0]' > /dev/null; then
+    terraform import 'azurerm_key_vault_key.tre_mgmt_encryption[0]' "$MGMT_ENCYRPTION_KEY_IDENTIFIER_URL"
+  fi
 
-if ! terraform state show 'azurerm_role_assignment.kv_mgmt_encryption_key_user[0]' > /dev/null; then
-  terraform import 'azurerm_role_assignment.kv_mgmt_encryption_key_user[0]' "/subscriptions/$ARM_SUBSCRIPTION_ID/resourceGroups/$TF_VAR_mgmt_resource_group_name/providers/Microsoft.KeyVault/vaults/$TF_VAR_encryption_kv_name/providers/Microsoft.Authorization/roleAssignments/$MGMT_ENCRYPTION_IDENTITY_ROLE_ASSIGNMENT_ID"
-fi
+  # Import the encryption identity and its role assignment into the state
+  if ! terraform state show 'azurerm_user_assigned_identity.tre_mgmt_encryption[0]' > /dev/null; then
+    terraform import 'azurerm_user_assigned_identity.tre_mgmt_encryption[0]' "/subscriptions/$ARM_SUBSCRIPTION_ID/resourceGroups/$TF_VAR_mgmt_resource_group_name/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-tre-mgmt-encryption"
+  fi
 
-# Import current user's key vault role assignment into the state
-if ! terraform state show 'azurerm_role_assignment.current_user_to_key_vault_crypto_officer[0]' > /dev/null; then
-  terraform import 'azurerm_role_assignment.current_user_to_key_vault_crypto_officer[0]' "/subscriptions/$ARM_SUBSCRIPTION_ID/resourceGroups/$TF_VAR_mgmt_resource_group_name/providers/Microsoft.KeyVault/vaults/$TF_VAR_encryption_kv_name/providers/Microsoft.Authorization/roleAssignments/$CURRENT_USER_KEY_VAULT_CRYPTO_OFFICER"
+  if ! terraform state show 'azurerm_role_assignment.kv_mgmt_encryption_key_user[0]' > /dev/null; then
+    terraform import 'azurerm_role_assignment.kv_mgmt_encryption_key_user[0]' "/subscriptions/$ARM_SUBSCRIPTION_ID/resourceGroups/$TF_VAR_mgmt_resource_group_name/providers/Microsoft.KeyVault/vaults/$TF_VAR_encryption_kv_name/providers/Microsoft.Authorization/roleAssignments/$MGMT_ENCRYPTION_IDENTITY_ROLE_ASSIGNMENT_ID"
+  fi
+
+  # Import current user's key vault role assignment into the state
+  if ! terraform state show 'azurerm_role_assignment.current_user_to_key_vault_crypto_officer[0]' > /dev/null; then
+    terraform import 'azurerm_role_assignment.current_user_to_key_vault_crypto_officer[0]' "/subscriptions/$ARM_SUBSCRIPTION_ID/resourceGroups/$TF_VAR_mgmt_resource_group_name/providers/Microsoft.KeyVault/vaults/$TF_VAR_encryption_kv_name/providers/Microsoft.Authorization/roleAssignments/$CURRENT_USER_KEY_VAULT_CRYPTO_OFFICER"
+  fi
 fi
 
 echo "State imported"

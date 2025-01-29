@@ -15,16 +15,17 @@ management:
   # Azure Resource Manager credentials used for CI/CD pipelines
   arm_subscription_id: __CHANGE_ME__
 
+  # has to be created manually due to M42's policy
+  skip_imports_in_bootstrap: false
+  mgmt_encryption_identity_role_assignment_id: __CHANGE_ME__
+  current_user_key_vault_crypto_officer: __CHANGE_ME__
+  mgmt_encyrption_key_identifier_url: __CHANGE_ME__
+
   # If you want to override the currently signed in credentials
   # You would do this if running commands like `make terraform-install DIR=./templates/workspaces/base`
   # arm_tenant_id: __CHANGE_ME__
   # arm_client_id: __CHANGE_ME__
   # arm_client_secret: __CHANGE_ME__
-
-  # has to be created manually due to M42's policy
-  mgmt_encryption_identity_role_assignment_id: __CHANGE_ME__
-  current_user_key_vault_crypto_officer: __CHANGE_ME__
-  mgmt_encyrption_key_identifier_url: __CHANGE_ME__
 
 tre:
   # If your local machine/build agent cannot get the public IP
