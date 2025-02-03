@@ -88,10 +88,10 @@ if ! terraform state show azurerm_storage_account.state_storage > /dev/null; the
   terraform import azurerm_storage_account.state_storage "/subscriptions/$ARM_SUBSCRIPTION_ID/resourceGroups/$TF_VAR_mgmt_resource_group_name/providers/Microsoft.Storage/storageAccounts/$TF_VAR_mgmt_storage_account_name"
 fi
 
-if [ "${SKIP_IMPORTS_IN_BOOTSTRAP:-false}" = true ]; then
-  echo -e "\n\e[33m Skipping Terraform imports as SKIP_IMPORTS_IN_BOOTSTRAP=true\e[0m"
+if [ "${IMPORT_MANUALLY_CREATED_RESOURCES_IN_BOOTSTRAP:-true}" = false ]; then
+  echo -e "\n\e[33m Skipping Terraform imports of manually created resources as IMPORT_MANUALLY_CREATED_RESOURCES_IN_BOOTSTRAP=false\e[0m"
 else
-  echo -e "\n\e[33m WARNING: SKIP_IMPORTS_IN_BOOTSTRAP=false. if you encounter 'Error: Cannot import non-existent remote object', note that some environments (e.g., production) have policies that require manual creation of resources, which then has to be imported into Terraform. If this is not required for this deployment, set skip_imports_in_bootstrap:true in the config.yaml to skip these imports.\e[0m"
+  echo -e "\n\e[33m WARNING: IMPORT_MANUALLY_CREATED_RESOURCES_IN_BOOTSTRAP=true. if you encounter 'Error: Cannot import non-existent remote object', note that some environments (e.g., production) have policies that require manual creation of resources, which then has to be imported into Terraform. If this is not required for this deployment, set IMPORT_MANUALLY_CREATED_RESOURCES_IN_BOOTSTRAP:false in the config.yaml to skip these imports.\e[0m"
 
   # Import the Key Vault and the CMK into the state
   if ! terraform state show 'azurerm_key_vault.encryption_kv[0]' > /dev/null; then

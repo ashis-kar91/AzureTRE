@@ -15,8 +15,8 @@ management:
   # Azure Resource Manager credentials used for CI/CD pipelines
   arm_subscription_id: __CHANGE_ME__
 
-  # has to be created manually due to M42's policy
-  skip_imports_in_bootstrap: false
+  # Resources that have to be created manually due to M42's policy in production
+  import_manually_created_resources_in_bootstrap: false
   mgmt_encryption_identity_role_assignment_id: __CHANGE_ME__
   current_user_key_vault_crypto_officer: __CHANGE_ME__
   mgmt_encyrption_key_identifier_url: __CHANGE_ME__
