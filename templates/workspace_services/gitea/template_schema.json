@@ -49,11 +49,6 @@
       "default": false
     }
   },
-  "uiSchema": {
-    "is_exposed_externally": {
-      "classNames": "tre-hidden"
-    }
-  },
   "pipeline": {
     "install": [
       {
