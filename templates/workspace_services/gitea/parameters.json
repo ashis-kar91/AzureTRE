@@ -81,6 +81,12 @@
       "source": {
         "env": "KEY_STORE_ID"
       }
+    }, 
+    {
+      "name": "is_exposed_externally",
+      "source": {
+        "env": "IS_EXPOSED_EXTERNALLY"
+      }
     }
   ]
 }

@@ -72,6 +72,9 @@ parameters:
   - name: key_store_id
     type: string
     default: ""
+  - name: is_exposed_externally
+    type: boolean
+    defaul: false
 
 mixins:
   - exec
@@ -114,6 +117,7 @@ install:
         sql_sku: ${ bundle.parameters.sql_sku }
         enable_cmk_encryption: ${ bundle.parameters.enable_cmk_encryption }
         key_store_id: ${ bundle.parameters.key_store_id }
+        is_exposed_externally: ${ bundle.parameters.is_exposed_externally }
       backendConfig:
         use_azuread_auth: "true"
         use_oidc: "true"
@@ -141,6 +145,7 @@ upgrade:
         sql_sku: ${ bundle.parameters.sql_sku }
         enable_cmk_encryption: ${ bundle.parameters.enable_cmk_encryption }
         key_store_id: ${ bundle.parameters.key_store_id }
+        is_exposed_externally: ${ bundle.parameters.is_exposed_externally }
       backendConfig:
         use_azuread_auth: "true"
         use_oidc: "true"
@@ -168,6 +173,7 @@ uninstall:
         sql_sku: ${ bundle.parameters.sql_sku }
         enable_cmk_encryption: ${ bundle.parameters.enable_cmk_encryption }
         key_store_id: ${ bundle.parameters.key_store_id }
+        is_exposed_externally: ${ bundle.parameters.is_exposed_externally }
       backendConfig:
         use_azuread_auth: "true"
         use_oidc: "true"
