@@ -57,3 +57,4 @@ jobs:
       TEST_ACCOUNT_CLIENT_SECRET: "${{ secrets.TEST_ACCOUNT_CLIENT_SECRET }}"
       TRE_ID: ${{ secrets.TRE_ID }}
       CI_CACHE_ACR_NAME: ${{ secrets.ACR_NAME }}
+      ALLOWED_SUBNET_ID: ${{ secrets.ALLOWED_SUBNET_ID }}

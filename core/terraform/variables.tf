@@ -241,3 +241,9 @@ variable "encryption_kv_name" {
   description = "Name of Key Vault for encryption keys, required only if external_key_store_id is not set (only used if enable_cmk_encryption is true)"
   default     = null
 }
+
+variable "allowed_subnet_id" {
+  description = "Subnet ID of the github runners"
+  type        = string
+  default     = ""
+}

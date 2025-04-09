@@ -90,6 +90,9 @@ on:  # yamllint disable-line rule:truthy
       AZURE_CREDENTIALS:
         description: ""
         required: true
+      ALLOWED_SUBNET_ID:
+        description: Enables vnet exception for the subnet to access private resources
+        required: true
 
 # This will prevent multiple runs of this entire workflow.
 # We should NOT cancel in progress runs as that can destabilize the environment.
@@ -174,6 +177,10 @@ jobs:
             echo "Missing variable: LOCATION" && exit 1
           fi
 
+          if [ "${{ secrets.ALLOWED_SUBNET_ID }}" == '' ]; then
+            echo "Missing variable: ALLOWED_SUBNET_ID" && exit 1
+          fi
+
       - name: Report check status start
         if: inputs.prHeadSha != ''
         uses: LouisBrunner/checks-action@v2.0.0
@@ -246,6 +253,7 @@ jobs:
           TERRAFORM_STATE_CONTAINER_NAME: ${{ vars.TERRAFORM_STATE_CONTAINER_NAME }}
           MGMT_RESOURCE_GROUP_NAME: ${{ secrets.MGMT_RESOURCE_GROUP_NAME }}
           MGMT_STORAGE_ACCOUNT_NAME: ${{ secrets.MGMT_STORAGE_ACCOUNT_NAME }}
+          ALLOWED_SUBNET_ID: ${{ secrets.ALLOWED_SUBNET_ID }}
 
       - name: ACR Login
         # failure in the first attempt indicates a new ACR, so we need to try again after it's been created
@@ -359,6 +367,7 @@ jobs:
           RP_BUNDLE_VALUES: ${{ vars.RP_BUNDLE_VALUES }}
           FIREWALL_SKU: ${{ vars.FIREWALL_SKU}}
           APP_GATEWAY_SKU: ${{ vars.APP_GATEWAY_SKU }}
+          ALLOWED_SUBNET_ID: ${{ secrets.ALLOWED_SUBNET_ID }}
 
       - name: API Healthcheck
         uses: ./.github/actions/devcontainer_run_command
